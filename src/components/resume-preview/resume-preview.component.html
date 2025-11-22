@@ -1,0 +1,170 @@
+<div class="w-full max-w-[210mm] flex flex-col items-center space-y-4">
+  <div class="relative inline-block text-left w-full">
+    <div>
+      <button (click)="isExportMenuOpen.set(!isExportMenuOpen())" type="button" class="inline-flex justify-center w-full rounded-lg border border-transparent shadow-sm px-4 py-3 bg-primary-blue text-base font-medium text-white hover:bg-dark-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-primary-blue dark:focus:ring-offset-slate-800 transition-colors" id="menu-button" aria-expanded="true" aria-haspopup="true">
+        Export Resume
+        <svg [class.rotate-180]="isExportMenuOpen()" class="-mr-1 ml-2 h-5 w-5 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+
+    @if (isExportMenuOpen()) {
+      <div class="origin-top-right absolute right-0 mt-2 w-full rounded-md shadow-lg bg-card-light dark:bg-slate-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+        <div class="py-1" role="none">
+          <button (click)="downloadAsPDF()" [disabled]="isDownloading() !== null" class="w-full text-left text-text-light dark:text-text-dark block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed" role="menuitem" tabindex="-1">
+            @if (isDownloading() === 'pdf') {
+              <span>Generating PDF...</span>
+            } @else {
+              <span>Download as PDF</span>
+            }
+          </button>
+          <button (click)="downloadAsPNG()" [disabled]="isDownloading() !== null" class="w-full text-left text-text-light dark:text-text-dark block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed" role="menuitem" tabindex="-1">
+            @if (isDownloading() === 'png') {
+              <span>Generating PNG...</span>
+            } @else {
+              <span>Download as PNG</span>
+            }
+          </button>
+          <button (click)="downloadAsJPG()" [disabled]="isDownloading() !== null" class="w-full text-left text-text-light dark:text-text-dark block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed" role="menuitem" tabindex="-1">
+            @if (isDownloading() === 'jpg') {
+              <span>Generating JPG...</span>
+            } @else {
+              <span>Download as JPG</span>
+            }
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+
+  <div id="resume-preview-content" class="w-[210mm] min-h-[297mm] bg-white text-slate-black p-12 font-sans shadow-2xl">
+    @let data = resumeData();
+    @if (data) {
+      <div class="resume-container">
+        <!-- Header -->
+        <header class="text-center border-b pb-6 mb-6">
+          <h1 class="text-4xl font-bold tracking-tight">{{ data.personalDetails.fullName }}</h1>
+          <h2 class="text-xl font-medium text-primary-blue mt-1">{{ data.personalDetails.jobTitle }}</h2>
+          <div class="flex justify-center items-center space-x-4 text-sm mt-4 text-slate-600">
+            <span>{{ data.personalDetails.email }}</span>
+            <span>&bull;</span>
+            <span>{{ data.personalDetails.phone }}</span>
+            <span>&bull;</span>
+            <span>{{ data.personalDetails.location }}</span>
+            @if (data.personalDetails.website) {
+              <span>&bull;</span>
+              <span>{{ data.personalDetails.website }}</span>
+            }
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="space-y-6">
+          <!-- Summary -->
+          <section>
+            <h3 class="section-title">Summary</h3>
+            <p class="text-base leading-relaxed">{{ data.summary }}</p>
+          </section>
+
+          <!-- Experience -->
+          @if (data.experience && data.experience.length > 0) {
+          <section>
+            <h3 class="section-title">Experience</h3>
+            <div class="space-y-4">
+              @for (exp of data.experience; track exp) {
+              <div>
+                <div class="flex justify-between items-baseline">
+                  <h4 class="font-bold text-lg">{{ exp.role }}</h4>
+                  <p class="text-sm text-slate-500">{{ exp.startDate }} - {{ exp.endDate }}</p>
+                </div>
+                <p class="text-md font-medium text-slate-700">{{ exp.company }}</p>
+                <ul class="list-disc pl-5 mt-1 text-base text-slate-600 space-y-1">
+                  @for (item of exp.description.split('\n'); track item) {
+                    @if (item.trim()) {
+                      <li>{{ item.replace('-', '').trim() }}</li>
+                    }
+                  }
+                </ul>
+              </div>
+              }
+            </div>
+          </section>
+          }
+
+          <!-- Skills -->
+          @if (data.skills && data.skills.length > 0) {
+          <section>
+            <h3 class="section-title">Skills</h3>
+            <div class="flex flex-wrap gap-2">
+              @for (skill of data.skills; track skill) {
+              <span class="bg-blue-100 text-primary-blue text-sm font-medium px-3 py-1 rounded-full">{{ skill }}</span>
+              }
+            </div>
+          </section>
+          }
+
+          <!-- Projects -->
+          @if (data.projects && data.projects.length > 0) {
+          <section>
+            <h3 class="section-title">Projects</h3>
+            <div class="space-y-3">
+              @for (proj of data.projects; track proj) {
+              <div>
+                <h4 class="font-bold text-lg">{{ proj.name }}</h4>
+                <p class="text-base text-slate-600">{{ proj.description }}</p>
+              </div>
+              }
+            </div>
+          </section>
+          }
+          
+          <!-- Education -->
+          @if (data.education && data.education.length > 0) {
+          <section>
+            <h3 class="section-title">Education</h3>
+            <div class="space-y-2">
+              @for (edu of data.education; track edu) {
+              <div>
+                <div class="flex justify-between items-baseline">
+                  <h4 class="font-bold text-lg">{{ edu.institution }}</h4>
+                  <p class="text-sm text-slate-500">{{ edu.startDate }} - {{ edu.endDate }}</p>
+                </div>
+                <p class="text-md font-medium text-slate-700">{{ edu.degree }}</p>
+              </div>
+              }
+            </div>
+          </section>
+          }
+
+          <!-- Certifications -->
+          @if (data.certifications && data.certifications.length > 0) {
+          <section>
+            <h3 class="section-title">Certifications</h3>
+            <div class="space-y-2">
+              @for (cert of data.certifications; track cert) {
+              <div>
+                <div class="flex justify-between items-baseline">
+                  <h4 class="font-bold text-lg">{{ cert.name }}</h4>
+                  <p class="text-sm text-slate-500">{{ cert.date }}</p>
+                </div>
+                <p class="text-md font-medium text-slate-700">{{ cert.issuer }}</p>
+              </div>
+              }
+            </div>
+          </section>
+          }
+
+        </main>
+      </div>
+    } @else {
+      <p>Loading resume data...</p>
+    }
+  </div>
+</div>
+<style>
+  .section-title {
+    @apply text-xl font-bold text-slate-800 border-b-2 border-primary-blue pb-1 mb-3;
+  }
+</style>

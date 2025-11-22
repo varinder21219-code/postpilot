@@ -1,0 +1,5 @@
+{
+  "name": "ResumeCraft",
+  "description": "A clean, fast, minimal 1-page resume builder where users fill a form and instantly get a perfectly designed resume preview that they can download as a PDF.",
+  "requestFramePermissions": []
+}

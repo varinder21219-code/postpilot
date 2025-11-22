@@ -1,0 +1,133 @@
+<div class="space-y-8" [formGroup]="resumeForm">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-slate-black dark:text-white">Edit Resume</h2>
+    <button (click)="resetForm()" class="text-sm text-slate-gray dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors">
+      Clear Data
+    </button>
+  </div>
+  
+  <!-- Personal Details -->
+  <div class="bg-card-light dark:bg-slate-800 rounded-lg shadow-lg border border-border-light dark:border-slate-700">
+    <div (click)="toggleSection('personalDetails')" class="p-6 cursor-pointer flex justify-between items-center">
+      <h3 class="text-lg font-medium">Personal Details</h3>
+      <svg [class.rotate-180]="!openSections()['personalDetails']" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+    </div>
+    @if(openSections()['personalDetails']) {
+    <div class="p-6 border-t border-border-light dark:border-slate-700" formGroupName="personalDetails">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" placeholder="Full Name" formControlName="fullName" class="form-input">
+        <input type="text" placeholder="Job Title" formControlName="jobTitle" class="form-input">
+        <input type="email" placeholder="Email" formControlName="email" class="form-input">
+        <input type="tel" placeholder="Phone" formControlName="phone" class="form-input">
+        <input type="text" placeholder="Location" formControlName="location" class="form-input">
+        <input type="text" placeholder="Website/Portfolio" formControlName="website" class="form-input">
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Summary -->
+  <div class="bg-card-light dark:bg-slate-800 rounded-lg shadow-lg border border-border-light dark:border-slate-700">
+    <div (click)="toggleSection('summary')" class="p-6 cursor-pointer flex justify-between items-center">
+      <h3 class="text-lg font-medium">Professional Summary</h3>
+      <svg [class.rotate-180]="!openSections()['summary']" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+    </div>
+    @if(openSections()['summary']) {
+    <div class="p-6 border-t border-border-light dark:border-slate-700">
+      <textarea formControlName="summary" placeholder="A brief professional summary..." class="form-input" rows="4"></textarea>
+    </div>
+    }
+  </div>
+
+  <!-- Experience -->
+  <div class="bg-card-light dark:bg-slate-800 rounded-lg shadow-lg border border-border-light dark:border-slate-700">
+    <div (click)="toggleSection('experience')" class="p-6 cursor-pointer flex justify-between items-center">
+      <h3 class="text-lg font-medium">Experience</h3>
+      <svg [class.rotate-180]="!openSections()['experience']" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+    </div>
+    @if(openSections()['experience']) {
+    <div class="p-6 border-t border-border-light dark:border-slate-700 space-y-6" formArrayName="experience">
+      @for(exp of experience.controls; track exp; let i = $index) {
+        <div [formGroupName]="i" class="p-4 border rounded-md border-border-light dark:border-slate-600 space-y-3 relative bg-white dark:bg-slate-800/50">
+           <button (click)="removeExperience(i)" class="absolute top-3 right-3 text-slate-400 hover:text-red-500 transition-colors p-1 rounded-full">
+             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
+           </button>
+          <input type="text" placeholder="Company" formControlName="company" class="form-input w-full">
+          <input type="text" placeholder="Role" formControlName="role" class="form-input w-full">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="month" placeholder="Start Date" formControlName="startDate" class="form-input">
+            <input type="month" placeholder="End Date" formControlName="endDate" class="form-input">
+          </div>
+          <textarea placeholder="Description (one point per line)" formControlName="description" class="form-input w-full" rows="3"></textarea>
+        </div>
+      }
+      <button (click)="addExperience()" class="btn-secondary w-full">Add Experience</button>
+    </div>
+    }
+  </div>
+  
+  <!-- Education -->
+  <div class="bg-card-light dark:bg-slate-800 rounded-lg shadow-lg border border-border-light dark:border-slate-700">
+    <div (click)="toggleSection('education')" class="p-6 cursor-pointer flex justify-between items-center">
+      <h3 class="text-lg font-medium">Education</h3>
+      <svg [class.rotate-180]="!openSections()['education']" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+    </div>
+    @if(openSections()['education']) {
+    <div class="p-6 border-t border-border-light dark:border-slate-700 space-y-6" formArrayName="education">
+      @for(edu of education.controls; track edu; let i = $index) {
+        <div [formGroupName]="i" class="p-4 border rounded-md border-border-light dark:border-slate-600 space-y-3 relative bg-white dark:bg-slate-800/50">
+           <button (click)="removeEducation(i)" class="absolute top-3 right-3 text-slate-400 hover:text-red-500 transition-colors p-1 rounded-full">
+             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
+           </button>
+          <input type="text" placeholder="Institution" formControlName="institution" class="form-input w-full">
+          <input type="text" placeholder="Degree" formControlName="degree" class="form-input w-full">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="month" placeholder="Start Date" formControlName="startDate" class="form-input">
+            <input type="month" placeholder="End Date" formControlName="endDate" class="form-input">
+          </div>
+        </div>
+      }
+      <button (click)="addEducation()" class="btn-secondary w-full">Add Education</button>
+    </div>
+    }
+  </div>
+
+  <!-- Skills -->
+  <div class="bg-card-light dark:bg-slate-800 rounded-lg shadow-lg border border-border-light dark:border-slate-700">
+    <div (click)="toggleSection('skills')" class="p-6 cursor-pointer flex justify-between items-center">
+      <h3 class="text-lg font-medium">Skills</h3>
+      <svg [class.rotate-180]="!openSections()['skills']" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+    </div>
+    @if(openSections()['skills']) {
+    <div class="p-6 border-t border-border-light dark:border-slate-700 space-y-4" formArrayName="skills">
+      @for(skill of skills.controls; track skill; let i = $index) {
+        <div class="flex items-center space-x-3">
+          <input type="text" [formControlName]="i" class="form-input w-full" placeholder="e.g. TypeScript">
+           <button (click)="removeSkill(i)" class="text-slate-400 hover:text-red-500 transition-colors p-1 rounded-full">
+             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
+           </button>
+        </div>
+      }
+      <button (click)="addSkill()" class="btn-secondary w-full">Add Skill</button>
+    </div>
+    }
+  </div>
+
+</div>
+
+<style>
+  .form-input {
+    @apply w-full px-4 py-2 text-base text-text-light dark:text-text-dark 
+           bg-white dark:bg-slate-700 
+           border border-slate-300 dark:border-slate-600 
+           rounded-lg shadow-sm
+           placeholder-slate-400 dark:placeholder-slate-400
+           focus:outline-none focus:ring-2 focus:ring-primary-blue dark:focus:ring-light-blue 
+           focus:border-transparent transition-all duration-200;
+  }
+  .btn-secondary {
+    @apply w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg
+           font-medium text-slate-700 dark:text-slate-300
+           hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors;
+  }
+</style>
